@@ -48,12 +48,14 @@ prompt() {
 
 meat() {
 	echo "Take yo' pitcha"
+	notify-send "zt" "Select area to screnshot"
 	sleep 0.2
 	scrot -s $HOME/Pictures/ss/$FILENAME
 	if [[ ! $? -eq 0 ]]; then
 		echo "Whoops."
 		exit 1
 	fi
+	notify-send "zt" "Uploading $FILENAME..."
 	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
 	echo $URL$FILENAME | xclip -sel clip
 	notify-send "zt" "$FILENAME uploaded."
