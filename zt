@@ -1,0 +1,77 @@
+#!/bin/bash
+#
+# zt
+# ze Tinygrab Clone
+# zt takes no arguments (whole screen), -s (selection), and -u (current window)
+# released under GPL, whichever version means people have to give attribution
+# by hlmtre/Matt Weller
+# contributions by Lucifer7 (libnotify and hotkey binding bugfix)
+#
+
+CONF="$HOME/.ztrc"
+USERNAME=
+PORT=
+HOSTNAME=
+DIR=
+URL=
+
+gen_filename() {
+	FILENAME=`< /dev/urandom tr -dc A-Za-z0-9_ | head -c8`
+	FILENAME="$FILENAME.png"
+	meat
+}
+
+
+read_config() {
+	PORT=`sed -n '1,1p' $CONF`
+	USERNAME=`sed -n '2,2p' $CONF`
+	HOSTNAME=`sed -n '3,3p' $CONF`
+	DIR=`sed -n '4,4p' $CONF`
+	URL=`sed -n '5,5p' $CONF`
+}
+
+prompt() {
+	echo "Conf not found;"
+	read -p "Enter the hostname to upload to: " HOSTNAME
+	read -p "Enter the remote sshd port: " PORT
+	read -p "Enter the directory to upload to: " DIR
+	read -p "Enter remote account username: " USERNAME
+	read -p "Enter URL under which images will be available (include trailing slashes): " URL
+
+	touch $CONF
+	echo $PORT > $CONF
+	echo $USERNAME >> $CONF
+	echo $HOSTNAME >> $CONF
+	echo $DIR >> $CONF
+	echo $URL >> $CONF
+}
+
+meat() {
+	echo "Take yo' pitcha"
+	sleep 0.2
+	scrot -s $HOME/Pictures/ss/$FILENAME
+	if [[ ! $? -eq 0 ]]; then
+		echo "Whoops."
+		exit 1
+	fi
+	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
+	echo $URL$FILENAME | xclip -sel clip
+	notify-send "zt" "$FILENAME uploaded."
+}
+
+logic() {
+	if [[ ! -e $HOME/Pictures/ss/$FILENAME ]]; then 
+		meat
+	else
+		gen_filename
+	fi
+}
+
+
+if [[ -s $CONF ]]; then
+	read_config
+	logic
+else
+	prompt
+	logic
+fi
