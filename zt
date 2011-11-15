@@ -57,8 +57,13 @@ meat() {
 	fi
 	notify-send -t 2000 "zt" "Uploading $FILENAME..."
 	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
+	return_code=$?
 	echo $URL$FILENAME | xclip -sel clip
-	notify-send -t 2000 "zt" "$FILENAME uploaded."
+	if [[ $return_code -eq 0 ]]; then
+		notify-send -t 2000 "zt" "$FILENAME uploaded."
+	else 
+		notify-send -t 2000 "zt" "$FILENAME upload failed. Return code from scp: $return_code"
+	fi
 }
 
 logic() {
