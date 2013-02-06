@@ -1,0 +1,3 @@
+zt is a tinygrab clone written in bash for linux.<br />
+it requires ssh keys set up properly on the local and remote machine, for passwordless login.<br />
+locally it requires xclip, and scrot, and if you uncomment the libnotify stuff (i find it annoying), ... libnotify
