@@ -8,6 +8,13 @@
 # contributions by Lucifer7 (libnotify and hotkey binding bugfix)
 #
 
+if [[ -n $1 && "$1" == "-a" ]]; then
+	arg="-a"
+else
+	arg="-s"
+fi
+
+
 CONF="$HOME/.ztrc"
 USERNAME=
 PORT=
@@ -47,13 +54,22 @@ prompt() {
 }
 
 meat() {
-	echo "Take yo' pitcha"
-	notify-send -t 2000 "zt" "Select area to screenshot"
-	sleep 0.2
-	scrot -s $HOME/Pictures/ss/$FILENAME
-	if [[ ! $? -eq 0 ]]; then
-		echo "Whoops."
-		exit 1
+	echo $arg
+	if [[ "$arg" == "-s" ]]; then
+		notify-send -t 2000 "zt" "Select area to screenshot"
+		sleep 0.2
+		scrot $arg $HOME/Pictures/ss/$FILENAME
+		if [[ ! $? -eq 0 ]]; then
+			echo "Whoops."
+			exit 1
+		fi
+	else
+		sleep 0.2
+		scrot $HOME/Pictures/ss/$FILENAME
+		if [[ ! $? -eq 0 ]]; then
+			echo "Whoops."
+			exit 1
+		fi
 	fi
 	notify-send -t 2000 "zt" "Uploading $FILENAME..."
 	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
