@@ -54,7 +54,6 @@ prompt() {
 }
 
 meat() {
-	echo $arg
 	if [[ "$arg" == "-s" ]]; then
 		notify-send -t 2000 "zt" "Select area to screenshot"
 		sleep 0.2
@@ -74,7 +73,8 @@ meat() {
 	notify-send -t 2000 "zt" "Uploading $FILENAME..."
 	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
 	return_code=$?
-	echo $URL$FILENAME | xclip -sel clip
+# spit the filename into tr to strip newline, put it into the clipboard with xclip
+	echo $URL$FILENAME | tr -d '\n' | xclip -sel clip
 	if [[ $return_code -eq 0 ]]; then
 		notify-send -t 2000 "zt" "$FILENAME uploaded."
 	else 
