@@ -57,14 +57,14 @@ meat() {
 	if [[ "$arg" == "-s" ]]; then
 		notify-send -t 2000 "zt" "Select area to screenshot"
 		sleep 0.2
-		scrot $arg $HOME/Pictures/ss/$FILENAME
+		escrotum $arg $HOME/Pictures/ss/$FILENAME
 		if [[ ! $? -eq 0 ]]; then
 			echo "Whoops."
 			exit 1
 		fi
 	else
 		sleep 0.2
-		scrot $HOME/Pictures/ss/$FILENAME
+		escrotum $HOME/Pictures/ss/$FILENAME
 		if [[ ! $? -eq 0 ]]; then
 			echo "Whoops."
 			exit 1
