@@ -7,6 +7,11 @@
 # by hlmtre/Matt Weller
 # contributions by Lucifer7 (libnotify and hotkey binding bugfix)
 #
+# depends:
+# xclip
+# maim
+# notify-send, if you turn it on
+#
 
 if [[ -n $1 && "$1" == "-a" ]]; then
 	arg="-a"
@@ -57,14 +62,14 @@ meat() {
 	if [[ "$arg" == "-s" ]]; then
 		#notify-send -t 2000 "zt" "Select area to screenshot"
 		sleep 0.2
-		escrotum $arg $HOME/Pictures/ss/$FILENAME
+		maim $arg $HOME/Pictures/ss/$FILENAME
 		if [[ ! $? -eq 0 ]]; then
 			echo "Whoops."
 			exit 1
 		fi
 	else
 		sleep 0.2
-		escrotum $HOME/Pictures/ss/$FILENAME
+		maim $HOME/Pictures/ss/$FILENAME
 		if [[ ! $? -eq 0 ]]; then
 			echo "Whoops."
 			exit 1
