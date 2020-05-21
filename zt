@@ -15,6 +15,8 @@
 
 if [[ -n $1 && "$1" == "-a" ]]; then
 	arg="-a"
+elif [[ "$1" == "-c" ]]; then
+  arg="-c"
 else
 	arg="-s"
 fi
@@ -58,7 +60,15 @@ prompt() {
 	echo $URL >> $CONF
 }
 
+clip() {
+    maim -s | xclip -sel clipboard -t image/png
+}
+
 meat() {
+  if [[ "$arg" == "-c" ]]; then
+      clip
+      exit 0
+  fi
 	if [[ "$arg" == "-s" ]]; then
 		#notify-send -t 2000 "zt" "Select area to screenshot"
 		sleep 0.2
@@ -82,19 +92,18 @@ meat() {
 	echo $URL$FILENAME | tr -d '\n' | xclip -sel clip
 	#if [[ $return_code -eq 0 ]]; then
 	#	notify-send -t 2000 "zt" "$FILENAME uploaded."
-	#else 
+	#else
 	#	notify-send -t 2000 "zt" "$FILENAME upload failed. Return code from scp: $return_code"
 	#fi
 }
 
 logic() {
-	if [[ ! -e $HOME/Pictures/ss/$FILENAME ]]; then 
+	if [[ ! -e $HOME/Pictures/ss/$FILENAME ]]; then
 		meat
 	else
 		gen_filename
 	fi
 }
-
 
 if [[ -s $CONF ]]; then
 	read_config

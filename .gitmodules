@@ -1,0 +1,6 @@
+[submodule "slop"]
+	path = slop
+	url = https://github.com/naelstrof/slop.git
+[submodule "maim"]
+	path = maim
+	url = https://github.com/naelstrof/maim.git
