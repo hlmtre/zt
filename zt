@@ -21,7 +21,7 @@ else
 	arg="-s"
 fi
 
-
+CLIPBOARD="primary"
 CONF="$HOME/.ztrc"
 USERNAME=
 PORT=
@@ -61,7 +61,7 @@ prompt() {
 }
 
 clip() {
-    maim -s | xclip -sel clipboard -t image/png
+    maim -s | xclip -sel $CLIPBOARD -t image/png
 }
 
 meat() {
@@ -89,7 +89,7 @@ meat() {
 	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
 	return_code=$?
 # spit the filename into tr to strip newline, put it into the clipboard with xclip
-	echo $URL$FILENAME | tr -d '\n' | xclip -sel clip
+	echo $URL$FILENAME | tr -d '\n' | xclip -sel $CLIPBOARD
 	#if [[ $return_code -eq 0 ]]; then
 	#	notify-send -t 2000 "zt" "$FILENAME uploaded."
 	#else
