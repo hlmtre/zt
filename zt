@@ -21,7 +21,7 @@ else
 	arg="-s"
 fi
 
-CLIPBOARD="primary"
+CLIPBOARD="clipboard"
 CONF="$HOME/.ztrc"
 USERNAME=
 PORT=
@@ -33,6 +33,16 @@ gen_filename() {
 	FILENAME=`< /dev/urandom tr -dc A-Za-z0-9_ | head -c8`
 	FILENAME="$FILENAME.png"
 	meat
+}
+
+wm() {
+  WM=`wmctrl -m | grep Name: | awk '{print $2 $3}'`
+  if [[ $WM == "wlrootswm" ]]; then
+      return 0
+  else
+      return 1
+  fi
+
 }
 
 
@@ -64,6 +74,10 @@ clip() {
     maim -s | xclip -sel $CLIPBOARD -t image/png
 }
 
+wlclip () {
+    grim -g "$(slurp)" $HOME/Pictures/ss/$FILENAME
+}
+
 meat() {
   if [[ "$arg" == "-c" ]]; then
       clip
@@ -71,8 +85,12 @@ meat() {
   fi
 	if [[ "$arg" == "-s" ]]; then
 		#notify-send -t 2000 "zt" "Select area to screenshot"
-		sleep 0.2
-		maim $arg $HOME/Pictures/ss/$FILENAME
+    if  wm ; then
+        wlclip $FILENAME
+    else
+        sleep 0.2
+        maim $arg $HOME/Pictures/ss/$FILENAME
+    fi
 		if [[ ! $? -eq 0 ]]; then
 			echo "Whoops."
 			exit 1
@@ -89,7 +107,11 @@ meat() {
 	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
 	return_code=$?
 # spit the filename into tr to strip newline, put it into the clipboard with xclip
-	echo $URL$FILENAME | tr -d '\n' | xclip -sel $CLIPBOARD
+  if wm ; then
+	    echo $URL$FILENAME | tr -d '\n' | wl-copy
+  else
+	    echo $URL$FILENAME | tr -d '\n' | xclip -sel $CLIPBOARD
+  fi
 	#if [[ $return_code -eq 0 ]]; then
 	#	notify-send -t 2000 "zt" "$FILENAME uploaded."
 	#else
