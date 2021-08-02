@@ -4,3 +4,6 @@
 [submodule "maim"]
 	path = maim
 	url = https://github.com/naelstrof/maim.git
+[submodule "wl-clipboard"]
+	path = wl-clipboard
+	url = https://github.com/bugaevc/wl-clipboard.git
