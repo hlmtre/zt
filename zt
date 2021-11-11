@@ -14,11 +14,11 @@
 #
 
 if [[ -n $1 && "$1" == "-a" ]]; then
-	arg="-a"
+  arg="-a"
 elif [[ "$1" == "-c" ]]; then
   arg="-c"
 else
-	arg="-s"
+  arg="-s"
 fi
 
 CLIPBOARD="clipboard"
@@ -30,9 +30,9 @@ DIR=
 URL=
 
 gen_filename() {
-	FILENAME=`< /dev/urandom tr -dc A-Za-z0-9_ | head -c8`
-	FILENAME="$FILENAME.png"
-	meat
+  FILENAME=`< /dev/urandom tr -dc A-Za-z0-9_ | head -c8`
+  FILENAME="$FILENAME.png"
+  meat
 }
 
 wm() {
@@ -47,27 +47,27 @@ wm() {
 
 
 read_config() {
-	PORT=`sed -n '1,1p' $CONF`
-	USERNAME=`sed -n '2,2p' $CONF`
-	HOSTNAME=`sed -n '3,3p' $CONF`
-	DIR=`sed -n '4,4p' $CONF`
-	URL=`sed -n '5,5p' $CONF`
+  PORT=`sed -n '1,1p' $CONF`
+  USERNAME=`sed -n '2,2p' $CONF`
+  HOSTNAME=`sed -n '3,3p' $CONF`
+  DIR=`sed -n '4,4p' $CONF`
+  URL=`sed -n '5,5p' $CONF`
 }
 
 prompt() {
-	echo "Conf not found;"
-	read -p "Enter the hostname to upload to: " HOSTNAME
-	read -p "Enter the remote sshd port: " PORT
-	read -p "Enter the directory to upload to: " DIR
-	read -p "Enter remote account username: " USERNAME
-	read -p "Enter URL under which images will be available (include trailing slashes): " URL
+  echo "Conf not found;"
+  read -p "Enter the hostname to upload to: " HOSTNAME
+  read -p "Enter the remote sshd port: " PORT
+  read -p "Enter the directory to upload to: " DIR
+  read -p "Enter remote account username: " USERNAME
+  read -p "Enter URL under which images will be available (include trailing slashes): " URL
 
-	touch $CONF
-	echo $PORT > $CONF
-	echo $USERNAME >> $CONF
-	echo $HOSTNAME >> $CONF
-	echo $DIR >> $CONF
-	echo $URL >> $CONF
+  touch $CONF
+  echo $PORT > $CONF
+  echo $USERNAME >> $CONF
+  echo $HOSTNAME >> $CONF
+  echo $DIR >> $CONF
+  echo $URL >> $CONF
 }
 
 clip() {
@@ -83,54 +83,54 @@ meat() {
       clip
       exit 0
   fi
-	if [[ "$arg" == "-s" ]]; then
-		#notify-send -t 2000 "zt" "Select area to screenshot"
+  if [[ "$arg" == "-s" ]]; then
+    #notify-send -t 2000 "zt" "Select area to screenshot"
     if  wm ; then
         wlclip $FILENAME
     else
         sleep 0.2
         maim $arg $HOME/Pictures/ss/$FILENAME
     fi
-		if [[ ! $? -eq 0 ]]; then
-			echo "Whoops."
-			exit 1
-		fi
-	else
-		sleep 0.2
-		maim $HOME/Pictures/ss/$FILENAME
-		if [[ ! $? -eq 0 ]]; then
-			echo "Whoops."
-			exit 1
-		fi
-	fi
-	#notify-send -t 2000 "zt" "Uploading $FILENAME..."
-	scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
-	return_code=$?
+    if [[ ! $? -eq 0 ]]; then
+      echo "Whoops."
+      exit 1
+    fi
+  else
+    sleep 0.2
+    maim $HOME/Pictures/ss/$FILENAME
+    if [[ ! $? -eq 0 ]]; then
+      echo "Whoops."
+      exit 1
+    fi
+  fi
+  #notify-send -t 2000 "zt" "Uploading $FILENAME..."
+  scp -oPort=$PORT $HOME/Pictures/ss/$FILENAME $USERNAME@$HOSTNAME:$DIR
+  return_code=$?
 # spit the filename into tr to strip newline, put it into the clipboard with xclip
   if wm ; then
-	    echo $URL$FILENAME | tr -d '\n' | wl-copy
+      echo $URL$FILENAME | tr -d '\n' | wl-copy
   else
-	    echo $URL$FILENAME | tr -d '\n' | xclip -sel $CLIPBOARD
+      echo $URL$FILENAME | tr -d '\n' | xclip -sel $CLIPBOARD
   fi
-	#if [[ $return_code -eq 0 ]]; then
-	#	notify-send -t 2000 "zt" "$FILENAME uploaded."
-	#else
-	#	notify-send -t 2000 "zt" "$FILENAME upload failed. Return code from scp: $return_code"
-	#fi
+  #if [[ $return_code -eq 0 ]]; then
+  # notify-send -t 2000 "zt" "$FILENAME uploaded."
+  #else
+  # notify-send -t 2000 "zt" "$FILENAME upload failed. Return code from scp: $return_code"
+  #fi
 }
 
 logic() {
-	if [[ ! -e $HOME/Pictures/ss/$FILENAME ]]; then
-		meat
-	else
-		gen_filename
-	fi
+  if [[ ! -e $HOME/Pictures/ss/$FILENAME ]]; then
+    meat
+  else
+    gen_filename
+  fi
 }
 
 if [[ -s $CONF ]]; then
-	read_config
-	logic
+  read_config
+  logic
 else
-	prompt
-	logic
+  prompt
+  logic
 fi
